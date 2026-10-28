@@ -1,1 +1,204 @@
+<!DOCTYPE html>
+<html lang="si" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ඩිජිටල් මංගල පහන් රුක - Display Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Noto+Serif+Sinhala:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #260A0F 0%, #120306 60%, #050002 100%);
+            font-family: 'Noto Serif Sinhala', serif;
+            overflow-x: hidden;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF8DC 0%, #FFE066 25%, #F5B041 50%, #D4AC0D 75%, #F7DC6F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(245, 176, 65, 0.4);
+        }
+        .flame-glow {
+            filter: drop-shadow(0px 0px 8px rgba(255, 160, 0, 0.95)) drop-shadow(0px 0px 22px rgba(255, 111, 0, 0.85));
+        }
+        .glass-card {
+            background: rgba(35, 8, 14, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        canvas { pointer-events: none; }
+    </style>
+</head>
+<body class="min-h-screen text-amber-100 flex flex-col justify-between relative overflow-hidden select-none">
 
+    <canvas id="particleCanvas" class="fixed inset-0 w-full h-full z-0"></canvas>
+
+    <nav class="relative z-20 w-full py-3 px-4 glass-card border-b border-amber-500/20 flex items-center justify-between text-sm">
+        <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+            <span class="font-bold text-amber-300 font-cinzel tracking-wider uppercase">Prince Media Unit</span>
+        </div>
+        <button id="resetBtn" class="px-3 py-1.5 rounded-lg bg-red-950/70 text-red-200 border border-red-500/40 hover:bg-red-900/80 text-xs">
+            Made By Gesadu
+        </button>
+    </nav>
+
+    <header class="relative z-10 pt-4 px-4 text-center flex flex-col items-center">
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-wide gold-gradient-text mb-2">
+            මාධ්‍ය ඒකක ඩිජිටල් මංගල පහන් රුක
+        </h1>
+    </header>
+
+    <main class="relative z-10 flex-1 container mx-auto px-4 py-2 flex flex-col items-center justify-center">
+        <div class="mb-3 glass-card px-6 py-2 rounded-full border border-amber-500/40 flex items-center gap-3 shadow-lg">
+            <span class="text-sm sm:text-lg font-bold text-amber-200">
+                දල්වන ලද පහන් සංඛ්‍යාව: 
+                <span id="litCountText" class="text-amber-400 text-xl sm:text-2xl font-black font-cinzel">0</span> 
+                <span class="text-amber-400/80 font-cinzel">/ 17</span>
+            </span>
+        </div>
+
+        <div class="relative w-full max-w-[540px] aspect-[4/5] flex items-center justify-center">
+            <svg id="lampSvg" viewBox="0 0 800 1000" class="w-full h-full filter drop-shadow-[0_15px_35px_rgba(0,0,0,0.95)]">
+                <defs>
+                    <linearGradient id="brassDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#7A5C0A"/><stop offset="50%" stop-color="#4D3E05"/><stop offset="100%" stop-color="#261E02"/>
+                    </linearGradient>
+                    <linearGradient id="brassHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#9A7D0A"/><stop offset="30%" stop-color="#F4D068"/><stop offset="70%" stop-color="#D4AC0D"/><stop offset="100%" stop-color="#7A5C0A"/>
+                    </linearGradient>
+                    <linearGradient id="brassGoldTier" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#7A5C0A"/><stop offset="40%" stop-color="#D4AC0D"/><stop offset="80%" stop-color="#FDF6E2"/><stop offset="100%" stop-color="#B7950B"/>
+                    </linearGradient>
+                    <radialGradient id="flameInner">
+                        <stop offset="0%" stop-color="#FFFFFF"/><stop offset="30%" stop-color="#FFF59D"/><stop offset="70%" stop-color="#FFB300"/><stop offset="100%" stop-color="#E65100"/>
+                    </radialGradient>
+                    <radialGradient id="flameAura">
+                        <stop offset="0%" stop-color="rgba(255, 179, 0, 0.9)"/><stop offset="40%" stop-color="rgba(230, 81, 0, 0.45)"/><stop offset="100%" stop-color="rgba(255, 111, 0, 0)"/>
+                    </radialGradient>
+                    <filter id="superGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="7" result="blur1"/><feGaussianBlur stdDeviation="16" result="blur2"/>
+                        <feMerge><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Base & Pillar -->
+                <ellipse cx="400" cy="950" rx="220" ry="30" fill="url(#brassDark)" stroke="#F4D068" stroke-width="2"/>
+                <path d="M 220 950 L 580 950 L 520 910 L 280 910 Z" fill="url(#brassHighlight)" stroke="#9A7D0A" stroke-width="2"/>
+                <ellipse cx="400" cy="910" rx="120" ry="18" fill="url(#brassGoldTier)"/>
+                <path d="M 330 910 C 330 870 360 850 400 850 C 440 850 470 870 470 910 Z" fill="url(#brassHighlight)"/>
+                <path d="M 380 850 L 420 850 L 415 650 L 385 650 Z" fill="url(#brassHighlight)"/>
+                <circle cx="400" cy="740" r="28" fill="url(#brassGoldTier)" stroke="#F4D068" stroke-width="1.5"/>
+                <circle cx="400" cy="520" r="24" fill="url(#brassGoldTier)" stroke="#F4D068" stroke-width="1.5"/>
+                <path d="M 385 650 L 415 650 L 410 400 L 390 400 Z" fill="url(#brassHighlight)"/>
+                <path d="M 390 400 L 410 400 L 405 200 L 395 200 Z" fill="url(#brassHighlight)"/>
+                
+                <!-- Top Crest -->
+                <path d="M 395 200 L 405 200 L 400 120 Z" fill="url(#brassGoldTier)"/>
+                <path d="M 400 120 C 380 100 380 80 400 60 C 420 80 420 100 400 120 Z" fill="url(#brassHighlight)" stroke="#F4D068" stroke-width="1.5"/>
+                <circle cx="400" cy="60" r="8" fill="#FFF9D6"/>
+
+                <!-- Tiers -->
+                <ellipse cx="400" cy="700" rx="290" ry="38" fill="none" stroke="url(#brassHighlight)" stroke-width="12"/>
+                <ellipse cx="400" cy="480" rx="200" ry="28" fill="none" stroke="url(#brassHighlight)" stroke-width="10"/>
+                <ellipse cx="400" cy="290" rx="110" ry="16" fill="none" stroke="url(#brassHighlight)" stroke-width="8"/>
+
+                <!-- Flames Render Container -->
+                <g id="flamesContainer"></g>
+            </svg>
+        </div>
+        <div id="displayStatusMsg" class="mt-2 text-sm text-amber-200/90 h-6">ඊළඟ පහන දැල්වීමට සූදානම්...</div>
+    </main>
+
+    <footer class="py-2 text-center text-xs text-amber-300/50 border-t border-amber-500/10">
+        Website made by <span style="color: #00ffcc;">Gesadu Sadith</span>[cite: 19]
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // Firebase Config (ඔයාගේ Project එකේ විස්තර)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBUSCofeLIbF7YwqIfGijyQq0wtC-8Y0k",
+            authDomain: "dppd---pmu.firebaseapp.com",
+            databaseURL: "https://dppd---pmu-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "dppd---pmu",
+            storageBucket: "dppd---pmu.firebasestorage.app",
+            messagingSenderId: "192997484899",
+            appId: "1:192997484899:web:e736056e353499ebb88b56"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const flamePositions = [
+            { x: 400, y: 48 },
+            { x: 290, y: 288 }, { x: 510, y: 288 },
+            { x: 200, y: 478 }, { x: 280, y: 488 }, { x: 360, y: 495 }, { x: 440, y: 495 }, { x: 520, y: 488 }, { x: 600, y: 478 },
+            { x: 110, y: 698 }, { x: 190, y: 708 }, { x: 270, y: 715 }, { x: 350, y: 720 }, { x: 450, y: 720 }, { x: 530, y: 715 }, { x: 610, y: 708 }, { x: 690, y: 698 }
+        ];
+
+        const totalLamps = 17;
+        const flamesContainer = document.getElementById('flamesContainer');
+        const litCountText = document.getElementById('litCountText');
+        const displayStatusMsg = document.getElementById('displayStatusMsg');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function renderFlames() {
+            flamesContainer.innerHTML = '';
+            flamePositions.forEach((pos, index) => {
+                const id = index + 1;
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.innerHTML = `
+                    <circle id="aura-${id}" cx="${pos.x}" cy="${pos.y - 14}" r="32" fill="url(#flameAura)" class="opacity-0 transition-opacity duration-700"/>
+                    <path d="M ${pos.x - 12} ${pos.y + 2} Q ${pos.x} ${pos.y + 14} ${pos.x + 12} ${pos.y + 2} Z" fill="url(#brassGoldTier)" stroke="#F4D068" stroke-width="1"/>
+                    <path d="M ${pos.x} ${pos.y + 2} L ${pos.x} ${pos.y - 4}" stroke="#1A0A00" stroke-width="2.5"/>
+                    <g id="flame-${id}" class="opacity-0 transition-all duration-700" transform="scale(0.1)" transform-origin="${pos.x} ${pos.y - 4}">
+                        <path d="M ${pos.x} ${pos.y - 44} C ${pos.x + 16} ${pos.y - 26} ${pos.x + 12} ${pos.y - 6} ${pos.x} ${pos.y - 6} C ${pos.x - 12} ${pos.y - 6} ${pos.x - 16} ${pos.y - 26} ${pos.x} ${pos.y - 44} Z" fill="url(#flameInner)" class="flame-glow" filter="url(#superGlow)"/>
+                        <path d="M ${pos.x} ${pos.y - 32} C ${pos.x + 8} ${pos.y - 20} ${pos.x + 6} ${pos.y - 8} ${pos.x} ${pos.y - 8} C ${pos.x - 6} ${pos.y - 8} ${pos.x - 8} ${pos.y - 20} ${pos.x} ${pos.y - 32} Z" fill="#FFFFFF"/>
+                    </g>
+                `;
+                flamesContainer.appendChild(g);
+            });
+        }
+
+        // Firebase එකෙන් ලයිට් කවුන්ට් එක වෙනස් වන විට ස්වයංක්‍රීයව అప్‌డేට් වීම
+        db.ref('pahanCount').on('value', (snapshot) => {
+            const count = snapshot.val() || 0;
+            litCountText.textContent = count;
+
+            for (let i = 1; i <= totalLamps; i++) {
+                const flame = document.getElementById(`flame-${i}`);
+                const aura = document.getElementById(`aura-${i}`);
+                if (flame && aura) {
+                    if (i <= count) {
+                        flame.classList.remove('opacity-0');
+                        flame.setAttribute('transform', 'scale(1)');
+                        aura.classList.remove('opacity-0');
+                    } else {
+                        flame.classList.add('opacity-0');
+                        flame.setAttribute('transform', 'scale(0.1)');
+                        aura.classList.add('opacity-0');
+                    }
+                }
+            }
+
+            if (count >= totalLamps) {
+                displayStatusMsg.textContent = 'සියලු 17 මංගල පහන් සාර්ථකව දල්වා අවසන්!';
+            } else if (count > 0) {
+                displayStatusMsg.textContent = `${count} වන පහන දැල්වුණි...`;
+            } else {
+                displayStatusMsg.textContent = 'ඊළඟ පහන දැල්වීමට සූදානම්...';
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            db.ref('pahanCount').set(0);
+        });
+
+        window.onload = renderFlames;
+    </script>
+</body>
+</html>
